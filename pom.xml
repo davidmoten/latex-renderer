@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -19,7 +20,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
- <slf4j.version>1.7.12</slf4j.version>
+        <slf4j.version>1.7.12</slf4j.version>
+        <aws.sdk.version>1.11.63</aws.sdk.version>
+        <aws.accessKeyId>${env.AWS_ACCESS_KEY}</aws.accessKeyId>
+        <aws.secretKey>${env.AWS_SECRET_ACCESS_KEY}</aws.secretKey>
     </properties>
 
     <licenses>
@@ -64,14 +68,37 @@
 
     <dependencies>
 
-        
         <dependency>
-            <groupId>com.github.davidmoten</groupId>
-            <artifactId>guava-mini</artifactId>
-            <version>0.1.1</version>
+            <groupId>org.scilab.forge</groupId>
+            <artifactId>jlatexmath</artifactId>
+            <version>1.0.4</version>
         </dependency>
         
-        <!--  test dependencies -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-api-gateway</artifactId>
+            <version>${aws.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>aws-helper</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        
+        <!-- test dependencies -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
