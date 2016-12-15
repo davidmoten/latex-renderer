@@ -1,7 +1,9 @@
 package com.github.davidmoten.latex;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -26,14 +28,17 @@ public class RendererHandler {
                 .orElseThrow(exception("'latex' parameter not found"));
 
         String stage = request.stage().orElseThrow(exception("stage value not found"));
-        String bucket = "latex-renderer-" + stage;
+        String bucket = "latex-renderer-prod"; // + stage;
         AmazonS3Client s3 = new AmazonS3Client();
         String s3Id = nextId();
         byte[] bytes = Renderer.renderPng(latex);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(bytes.length);
         s3.putObject(bucket, s3Id, new ByteArrayInputStream(bytes), metadata);
-        String url = s3.getResourceUrl(bucket, s3Id);
+        String url = s3
+                .generatePresignedUrl(bucket, s3Id,
+                        new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1000000)))
+                .toString();
         // must throw an exception to from java lambda to get 302
         // redirection to work! The error message (the url) is mapped by
         // the integration response part of the API Gateway to a 302

@@ -24,6 +24,8 @@
         <aws.sdk.version>1.11.63</aws.sdk.version>
         <aws.accessKeyId>${env.AWS_ACCESS_KEY}</aws.accessKeyId>
         <aws.secretKey>${env.AWS_SECRET_ACCESS_KEY}</aws.secretKey>
+        <proxy.host></proxy.host>
+        <function.name>latex-renderer</function.name>
     </properties>
 
     <licenses>
@@ -144,6 +146,7 @@
     </dependencies>
 
     <build>
+            <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -153,7 +156,37 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>com.github.davidmoten</groupId>
+                <artifactId>aws-maven-plugin</artifactId>
+                <version>0.2.2</version>
+                <configuration>
+                    <awsAccessKey>${aws.accessKeyId}</awsAccessKey>
+                    <awsSecretAccessKey>${aws.secretKey}</awsSecretAccessKey>
+                    <artifact>${project.build.directory}/${project.build.finalName}.jar</artifact>
+                    <functionName>${function.name}</functionName>
+                    <zipFilename>${project.build.directory}/${project.artifactId}.jar</zipFilename>
+                    <region>ap-southeast-2</region>
+                    <httpsProxyHost>${proxy.host}</httpsProxyHost>
+                    <httpsProxyPort>8080</httpsProxyPort>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -180,5 +213,5 @@
             </plugin>
         </plugins>
     </build>
-
+    
 </project>
