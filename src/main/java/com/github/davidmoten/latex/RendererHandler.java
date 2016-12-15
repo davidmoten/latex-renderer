@@ -1,9 +1,7 @@
 package com.github.davidmoten.latex;
 
 import java.io.ByteArrayInputStream;
-import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -24,8 +22,7 @@ public class RendererHandler {
         // expects full request body passthrough from api gateway integration
         // request
         StandardRequestBodyPassThrough request = StandardRequestBodyPassThrough.from(input);
-        String latex = request.queryStringParameter("latex")
-                .orElseThrow(exception("'latex' parameter not found"));
+        String latex = request.queryStringParameter("latex").orElseThrow(exception("'latex' parameter not found"));
 
         String stage = request.stage().orElseThrow(exception("stage value not found"));
         String bucket = "latex-renderer-prod"; // + stage;
@@ -34,12 +31,10 @@ public class RendererHandler {
         byte[] bytes = Renderer.renderPng(latex);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(bytes.length);
+        metadata.setContentType("image/png");
         s3.putObject(bucket, s3Id, new ByteArrayInputStream(bytes), metadata);
-        String url = s3
-                .generatePresignedUrl(bucket, s3Id,
-                        new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1000000)))
-                .toString();
-        // must throw an exception to from java lambda to get 302
+        String url = s3.getUrl(bucket, s3Id).toString();
+        // must throw an exception to from java lambdsa to get 302
         // redirection to work! The error message (the url) is mapped by
         // the integration response part of the API Gateway to a 302
         // status code with Location header equal to the url value

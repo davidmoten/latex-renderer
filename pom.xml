@@ -25,7 +25,8 @@
         <aws.accessKeyId>${env.AWS_ACCESS_KEY}</aws.accessKeyId>
         <aws.secretKey>${env.AWS_SECRET_ACCESS_KEY}</aws.secretKey>
         <proxy.host></proxy.host>
-        <function.name>latex-renderer</function.name>
+        <stage>prod</stage>
+        <function.name>latex-renderer-${stage}</function.name>
     </properties>
 
     <licenses>
